@@ -7,8 +7,7 @@ ec2 = boto3.resource('ec2')
 def lambda_handler(event, context):
     print("\n\nAWS snapshot backups starting at %s" % datetime.datetime.now())
     instances = ec2.instances.filter(
-        InstanceIds=['i-04b2fd1458c42c890']
-    )
+        Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
     
     for instance in instances:
         instance_name = instance.tags[0]['Value']
@@ -20,6 +19,14 @@ def lambda_handler(event, context):
             # create ebs snaphost
             if volume.create_snapshot(VolumeId=volume.volume_id, Description=description):
                 print("Snapshot created with description [%s]" % description)
+
+            # delete expired snapshot
+            for snapshot in volume.snapshots.all():
+                # expried datetime
+                retention_days = 7
+                if datetime.datetime.now().replace(tzinfo=None) - snapshot.start_time.replace(tzinfo=None) > datetime.timedelta(days=retention_days):
+                    print("\t\tDeleting snapshot [%s - %s]" % ( snapshot.snapshot_id, snapshot.description ))
+                    snapshot.delete()
 
     print("\n\nAWS snapshot backups completed at %s" % datetime.datetime.now())
     return True
