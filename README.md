@@ -46,7 +46,7 @@
 ## 创建函数
 
 1. Lambda -> 创建函数 -> 指定角色为 **timed_snapshot_role**，保存为**timed_snapshot**。
-2. 粘贴**lambda_function代码**，根据需要编辑代码 **InstanceIds数组**。
+2. 粘贴**lambda_function代码**，默认会遍历所有非关机状态的所有实例，根据需要编辑代码 **InstanceIds数组**。
 
 ## 创建定时器
 
@@ -54,3 +54,7 @@
 2. 选择**事件源**为计划事件，调整频率或编写您的Cron表达式。
 3. 添加**目标**为Lambda函数，选择刚才创建的**timed_snapshot**。
 4. 保存。
+
+## 参考链接
+
+https://cloud.tencent.com/info/33fc4f33b9cb504c26009510c2696800.html
